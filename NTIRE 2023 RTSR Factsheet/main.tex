@@ -1,0 +1,169 @@
+%% Factsheet template for AIM 2022 challenge
+%% 
+%%
+
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{colortbl, color, xcolor}
+
+\title{NTIRE 2023 Real-Time Super-Resolution}
+
+%%% Makre sure your teamname is short and does not contain special characters. It can also be the name of your method e.g. CompactSRNet - be more creative than use :)
+
+%%% Add Your names and affiliations.
+\author{\textcolor{red}{Your Teamname Here}\\
+\textcolor{red}{Your names}\thanks{\textcolor{blue}{Affiliations}}\\
+}
+
+
+\begin{document}
+
+\maketitle
+
+This factsheet template is meant to structure the description of the contributions made by each participating team in the NTIRE 2023 Real-Time Super-Resolution Challenge.
+%
+The provided information, the codes/executables and the achieved performance on the testing data are used to decide the awardees of the NTIRE 2023 Real-Time Super-Resolution Challenge. 
+
+\begin{enumerate}
+    \item The models will be benchmarked as indicated in \url{https://github.com/eduardzamfir/NTIRE23-RTSR#evaluation-of-your-submission}.
+    \item The test set is similar to the validation set, including only 4K native images. Reproducibility is a must. \textbf{We will only run and benchmark the models, we will not release or open-source them.} Open sourcing the solution is a must to receive the prizes, up to the team.
+    \item The winners, the awardees and the top ranking teams will be invited to co-author the NTIRE 2023 Real-Time Super-Resolution Challenge report and to submit papers with their solutions to the NTIRE 2023 workshop. Detailed descriptions are much appreciated: brief description of all models and experiments tested, ablations, visualizations, things that did not work, datasets, pre-trained models, etc. You can share qualitative results via shared folder at google drive, dropbox, etc.
+\end{enumerate}
+
+\textbf{If you participate in both Track 1 and 2, you only need to submit 1 factsheet}.
+This factsheet, and the source codes/models/executables (as specified \href{https://github.com/eduardzamfir/NTIRE23-RTSR#evaluation-of-your-submission}{here}) must be sent to \textbf{all of the NTIRE 2023 Real-Time Super-Resolution Challenge organizers} by email. We accept download links from your website, google drive, dropbox, etc. When using cloud services, please remember to allow sharing and consider the traffic limit of your service provider. If there is any problem, we will contact the team leader.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    Organizer name & Email \\
+    \hline
+    Marcos Conde  & marcos.conde@uni-wuerzburg.de  \\
+    Eduard Zamfir & eduard-sebastian.zamfir@uni-wuerzburg.de  \\
+    Radu Timofte  & radu.timofte@uni-wuerzburg.de \\
+    \hline
+\end{tabular}
+\vspace{-0.5cm}
+\end{center}
+\end{table}
+ \newpage
+\section*{Email final submission guide}
+
+\texttt{
+To: marcos.conde@uni-wuerzburg.de, \\
+eduard-sebastian.zamfir@uni-wuerzburg.de, \\
+radu.timofte@uni-wuerzburg.de\\
+cc: your\_team\_members\\
+Title: NTIRE 2023 Real-Time Super-Resolution Challenge - TEAM\_NAME\\
+}
+
+Body contents should include: 
+
+a) the challenge name (AND TRACKS): NTIRE 2023 Real-Time Super-Resolution Challenge
+
+b) team name 
+
+c) team leader's name and email address 
+
+d) rest of the team members 
+
+e) team name and user names on CodaLab competitions 
+
+f) executable/models/source code attached or download links. We will run and benchmark the models following \url{https://github.com/eduardzamfir/NTIRE23-RTSR#evaluation-of-your-submission}.
+
+g) factsheet attached. You can also provide a link to \textbf{overleaf}. Only we, the organizers, will be able to read it. Factsheet must be a compiled pdf file together with a zip with .tex factsheet source files (including figures with good resolution). 
+
+\section{Team details}
+
+\begin{itemize}
+\item Team name                                  
+\item Team leader name                           
+\item Team leader institution and email (Please make sure is an active email)
+\item Rest of the team members        
+\item Team website URL (if any)                   
+\item Affiliations
+\item Usernames on the NTIRE 2023 Real-Time Super-Resolution Codalab leaderboard (development/validation and testing phases)
+\item Link to the codes/executables of the solution(s) following \url{https://github.com/eduardzamfir/NTIRE23-RTSR}
+\end{itemize}
+
+\section{Contribution details}
+
+\begin{itemize}
+\item Title of the contribution
+\item General method description (Summary)
+\item References                                               
+\item have you tested previously published methods? (yes/no) If yes, please specify which methods and the results/problems you found.
+\item Other methods and baselines tested (even if results were not top competitive).
+\end{itemize}
+
+\section{Global Method Description}
+Please describe your method.
+
+\begin{itemize}
+\item Which pre-trained or external methods / models have been used (for any stage, if any) 
+\item Which datasets did you use for training? How did you pre-process the dataset?
+\item Training and Inference description
+\item Model optimization: how did you design your efficient model? do you use pruning? re-parametrization?
+\item Quantitative and qualitative advantages of the solution (optional)
+\item Results of the comparison to other approaches (if any)
+\item Results on other benchmarks (if any)
+\item Novelty degree of the solution and if it has been previously published
+\end{itemize}
+
+
+PLEASE ADD A DIAGRAM.
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \framebox{}
+    \caption{YOUR DIAGRAM HERE}
+    \label{fig:my_diagram}
+\end{figure}
+
+It is OK if the proposed solution is based on other works (papers, reports, Internet sources (links), etc), please \textbf{cite} them.
+
+\vspace{4mm}
+Please fill the following table specifying the technical information (besides writing it), should take 1 minute. 
+%FILL THIS TABLE PLEASE
+% Input:         size of the input patch used for TRAINING
+% Training time: in hours, how many hours do you train?
+% Attention:     Do you use attention mechanisms? If YES, indicate how in the technical details below
+% Optimization:  Do you use quantization or prunning?
+% Params:        Number of parameters of the model
+% GPU:           GPU used in yout experiments
+
+\begin{table}[]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{c|c|c|c|c|c|c}
+        Input & Training Time & Attention & Quantization & \# Params. (M) & GPU  \\
+        \hline
+         (256,256,3) & 12h & Yes/No & Yes/No & 5 Million & A100
+    \end{tabular}
+    }
+    \caption{FILL THIS TABLE PLEASE}
+    \label{tab:my_label}
+\end{table}
+
+\section{Technical details}
+Please make sure to write about the language and implementation details: framework, optimizer, learning rate, GPU, datasets used for training, training time, training strategies, efficiency optimization strategies.
+
+\vspace{4mm}
+\noindent Any particularities of the solution for this competition in comparison to other SR challenges (if applicable).
+
+\section{Other details}
+\begin{itemize}
+
+\item Planned submission of a solution(s) description paper at NTIRE 2023 workshop [YES/ NO].
+
+\item General comments and impressions of the NTIRE 2023 Real-Time Super-Resolution Challenge (we appreciate your feedback to improve in future editions).
+
+\item What do you expect from a new challenge in image restoration, enhancement and manipulation?
+
+\end{itemize}
+
+\end{document}

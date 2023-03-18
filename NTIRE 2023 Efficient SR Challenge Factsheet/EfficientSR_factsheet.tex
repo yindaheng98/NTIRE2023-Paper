@@ -1,6 +1,4 @@
-% CVPR 2022 Paper Template
-% based on the CVPR template provided by Ming-Ming Cheng (https://github.com/MCG-NKU/CVPR_Template)
-% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
+
 
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
@@ -40,13 +38,13 @@
 %%%%%%%%% PAPER ID  - PLEASE UPDATE
 \def\cvprPaperID{*****} % *** Enter the CVPR Paper ID here
 \def\confName{CVPR}
-\def\confYear{2022}
+\def\confYear{2023}
 
 
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{NTIRE 2022 Efficient SR Challenge Factsheet\\-title of the contribution-}
+\title{NTIRE 2023 Efficient SR Challenge Factsheet\\-title of the contribution-}
 
 \author{First Author\\
 Institution1\\
@@ -67,25 +65,28 @@ First line of institution2 address\\
 
 \section{Introduction}
 
-This factsheet template is meant to structure the description of the contributions made by each participating team in the NTIRE 2022 challenge on efficient image super-resolution. 
+This factsheet template is meant to structure the description of the contributions made by each participating team in the NTIRE 2023 challenge on efficient image super-resolution. 
 
 Ideally, all the aspects enumerated below should be addressed.
-The provided information, the codes/executables and the achieved performance on the testing data are used to decide the awardees of the NTIRE 2022 challenge. 
+The provided information, the codes/executables and the achieved performance on the testing data are used to decide the awardees of the NTIRE 2023 challenge. 
 
 Reproducibility is a must and needs to be checked for the final test results in order to qualify for the NTIRE awards. 
 
 The main winners will be decided based on overall performance and a number of awards will go to novel, interesting solutions and to solutions that stand up as the best in a particular subcategory the judging committee will decided. Please check the competition webpage and forums for more details.
 
-The winners, the awardees and the top ranking teams will be invited to co-author the NTIRE 2022 challenge report and to submit papers with their solutions to the NTIRE 2022 workshop. Detailed descriptions are much appreciated.
+The winners, the awardees and the top ranking teams will be invited to co-author the NTIRE 2023 challenge report and to submit papers with their solutions to the NTIRE 2023 workshop. Detailed descriptions are much appreciated.
 
-The factsheet, \href{https://github.com/ofsoundof/IMDN}{source codes/executables}, trained models should be sent to \textbf{all of the NTIRE 2022 challenge organizers (Yawei Li, Kai Zhang, and Radu Timofte)} by email.
+The factsheet, \href{https://github.com/ofsoundof/NTIRE2023_ESR}{source codes/executables}, trained models should be sent to \textbf{all of the NTIRE 2023 challenge organizers (Yawei Li, Yulun Zhang, and Radu Timofte)} by email.
+
 
 \section{Email final submission guide}
 
-\noindent To: {yawei.li@vision.ee.ethz.ch} \\ {kai.zhang@vision.ee.ethz.ch} \\ {radu.timofte@vision.ee.ethz.ch}\\
+\noindent To: {yawei.li@vision.ee.ethz.ch} \\ {yulun100@gmail.com} \\ {timofte.radu@gmail.com}\\
 \noindent cc: your\_team\_members\\
-Title: NTIRE 2022 Efficient SR Challenge - TEAM\_NAME\\
+Title: NTIRE 2023 Efficient SR Challenge - TEAM\_NAME - TEAM\_ID\\
 
+To get your TEAM\_ID, please register at \href{https://docs.google.com/spreadsheets/d/1oekPThh5mq9qKax0hPZiQSHlqTjaoQa-IBfrQkwN7gk/edit?usp=sharing}{Google Sheet}. Please fill in your Team Name, Contact Person, and Contact Email in the first empty row from the top of sheet.
+% 
 Body contents should include: 
 
 \begin{enumerate}[a)]
@@ -95,11 +96,14 @@ Body contents should include:
 
 \item rest of the team members 
 
-\item team name and user names on NTIRE 2022 CodaLab competitions 
+\item user names on NTIRE 2023 CodaLab competitions 
 
-\item executable/source code attached or download links. 
+\item Code, pretrained model, and factsheet download command, e.g. \texttt{git clone ...}, \texttt{wget ...}
 
-\item factsheet attached 
+\item Result download command, e.g. \texttt{wget ...}
+\begin{itemize}
+    \item Please provide different urls in e) and f)
+\end{itemize}
 \end{enumerate}
 
 
@@ -109,14 +113,15 @@ Body contents should include:
 
 \section{Code Submission}
 
-The code and trained models should be organized according to the \href{https://github.com/ofsoundof/IMDN}{GitHub repository}. This code repository provides the basis to compare the various methods in the challenge. \textbf{Code scripts based on other repositories will not be accepted.} Specifically, you should follow the steps below.
+The code and trained models should be organized according to the \href{https://github.com/ofsoundof/NTIRE2023_ESR}{GitHub repository}. This code repository provides the basis to compare the various methods in the challenge. \textbf{Code scripts based on other repositories will not be accepted.} Specifically, you should follow the steps below.
 \begin{enumerate}
-    \item Git clone \href{https://github.com/ofsoundof/IMDN}{the repository.}
-    \item Put your model script under the \texttt{models} folder.
-    \item Put your pretrained model under the \texttt{model\_zoo} folder.
+    \item Git clone \href{https://github.com/ofsoundof/NTIRE2023_ESR}{the repository.}
+    \item Put your model script under the \texttt{models} folder. Name your model script as \texttt{[Your\_Team\_ID]\_[Your\_Model\_Name].py}.
+    \item Put your pretrained model under the \texttt{model\_zoo} folder. Name your model checkpoint as \texttt{[Your\_Team\_ID]\_[Your\_Model\_Name].[pth or pt or ckpt]}
     \item Modify \texttt{model\_path} in \texttt{test\_demo.py}. Modify the imported models.
     \item \texttt{python test\_demo.py}
 \end{enumerate}
+Please send us the command to download your code, e.g. \texttt{git clone [Your repository link]}
 When submitting the code, please remove the LR and SR images in \texttt{data} folder to save the bandwidth.
 
 \section{Factsheet Information}
@@ -132,8 +137,8 @@ The factsheet should contain the following information. Most importantly, you sh
 \item Rest of the team members        
 \item Team website URL (if any)                   
 \item Affiliation
-\item Affiliation of the team and/or team members with NTIRE 2022 sponsors (check the workshop website)
-\item User names and entries on the NTIRE 2022 Codalab competitions (development/validation and testing phases)
+\item Affiliation of the team and/or team members with NTIRE 2023 sponsors (check the workshop website)
+\item User names and entries on the NTIRE 2023 Codalab competitions (development/validation and testing phases)
 \item Best scoring entries of the team during development/validation phase
 \item Link to the codes/executables of the solution(s)
 \end{itemize}
@@ -177,8 +182,8 @@ Additionally, you can refer to the following items to detail your description.
 
 \section{Other details}
 \begin{itemize}
-\item Planned submission of a solution(s) description paper at NTIRE 2022 workshop.
-\item General comments and impressions of the NTIRE 2022 challenge. 
+\item Planned submission of a solution(s) description paper at NTIRE 2023 workshop.
+\item General comments and impressions of the NTIRE 2023 challenge. 
 \item What do you expect from a new challenge in image restoration, enhancement and manipulation?
 \item Other comments: encountered difficulties, fairness of the challenge, proposed subcategories, proposed evaluation method(s), etc.
 \end{itemize}
