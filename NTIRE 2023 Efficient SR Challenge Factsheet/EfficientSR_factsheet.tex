@@ -148,35 +148,35 @@ Our method consists of four stages to transform a pre-trained RFDN\cite{liu2020r
     \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
 \end{enumerate}
 
-\begin{figure}
+\begin{figure*}
     \centering
-    \begin{subfigure}[b]{\linewidth}
+    \begin{subfigure}[b]{0.246\linewidth}
 		\centering
-        \framebox{}
+        \includegraphics[width=\textwidth]{../RFDN.pdf}
         \caption{RFDN}
         \label{fig:RFDN}
     \end{subfigure}
-    \begin{subfigure}[b]{\linewidth}
+    \begin{subfigure}[b]{0.2476\linewidth}
 		\centering
-        \framebox{}
+        \includegraphics[width=\textwidth]{../Branching.pdf}
         \caption{Branching}
         \label{fig:Branching}
     \end{subfigure}
-    \begin{subfigure}[b]{\linewidth}
+    \begin{subfigure}[b]{0.246\linewidth}
 		\centering
-        \framebox{}
+        \includegraphics[width=\textwidth]{../Re-parametrization.pdf}
         \caption{Re-parametrization}
         \label{fig:Re-parametrization}
     \end{subfigure}
-    \begin{subfigure}[b]{\linewidth}
+    \begin{subfigure}[b]{0.246\linewidth}
 		\centering
-        \framebox{}
+        \includegraphics[width=\textwidth]{../Pruning.pdf}
         \caption{Pruning}
         \label{fig:Pruning}
     \end{subfigure}
     \caption{Transform a pre-trained RFDN into PRFDN}
     \label{fig:PRFDN}
-\end{figure}
+\end{figure*}
 
 
 \section{Technical details}
