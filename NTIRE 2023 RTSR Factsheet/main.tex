@@ -8,6 +8,7 @@
 \usepackage{hyperref}
 \usepackage{url}
 \usepackage{colortbl, color, xcolor}
+\usepackage{subcaption}
 
 \title{NTIRE 2023 Real-Time Super-Resolution}
 
@@ -94,23 +95,31 @@ g) factsheet attached. You can also provide a link to \textbf{overleaf}. Only we
 
 \begin{itemize}
 \item Title of the contribution\\PRFDN: High Parallelism Distillation Network For Image Super-resolution
-\item General method description (Summary)
+\item General method description (Summary)\\Our methods
 \item References                                               
 \item have you tested previously published methods? (yes/no) If yes, please specify which methods and the results/problems you found.
-\item Other methods and baselines tested (even if results were not top competitive).
+\item Other methods and baselines tested (even if results were not top competitive).\\We have tested % TODO: 通道扩增
 \end{itemize}
 
 \section{Global Method Description}
-Please describe your method.
+% TODO: 参照去年的文章来，一页纸就够
+We proposed Parallel RFDN (PRFDN) as is shown in Fig.\ref{fig:PRFDN}.
+Our method consists of three stages to transform a pre-trained RFDN into PRFDN.
+\begin{enumerate}
+    \item Branching. To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
+    \item Training. Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
+    \item Re-parametrization. Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Branching}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
+    \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used torch-pruning to prune the model and finetune the model between each pruning step. %TODO: 需要cite
+\end{enumerate}
 
 \begin{itemize}
-\item Which pre-trained or external methods / models have been used (for any stage, if any) 
-\item Which datasets did you use for training? How did you pre-process the dataset?
-\item Training and Inference description
+\item Which pre-trained or external methods / models have been used (for any stage, if any) \\ Our method is based on the pre-trained RFDN baseline.
+\item Which datasets did you use for training? How did you pre-process the dataset? \\ We combined the training set of LSDIR, DIV2K, Flickr2K and OST as our training set, and take the validating set of DIV2K for validation.
+\item Training and Inference description \\ 
 \item Model optimization: how did you design your efficient model? do you use pruning? re-parametrization?
-\item Quantitative and qualitative advantages of the solution (optional)
-\item Results of the comparison to other approaches (if any)
-\item Results on other benchmarks (if any)
+\item Quantitative and qualitative advantages of the solution (optional): N/A
+\item Results of the comparison to other approaches (if any): N/A
+\item Results on other benchmarks (if any): N/A
 \item Novelty degree of the solution and if it has been previously published
 \end{itemize}
 
@@ -118,10 +127,32 @@ Please describe your method.
 PLEASE ADD A DIAGRAM.
 \begin{figure}
     \centering
-    %\includegraphics{}
-    \framebox{}
+    \begin{subfigure}[b]{0.49\linewidth}
+		\centering
+        \framebox{}
+        \caption{RFDN}
+        \label{fig:RFDN}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\linewidth}
+		\centering
+        \framebox{}
+        \caption{Branching}
+        \label{fig:Branching}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\linewidth}
+		\centering
+        \framebox{}
+        \caption{Re-parametrization}
+        \label{fig:Re-parametrization}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\linewidth}
+		\centering
+        \framebox{}
+        \caption{Pruning}
+        \label{fig:Pruning}
+    \end{subfigure}
     \caption{YOUR DIAGRAM HERE}
-    \label{fig:my_diagram}
+    \label{fig:PRFDN}
 \end{figure}
 
 It is OK if the proposed solution is based on other works (papers, reports, Internet sources (links), etc), please \textbf{cite} them.
