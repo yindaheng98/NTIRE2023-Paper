@@ -104,7 +104,7 @@ g) factsheet attached. You can also provide a link to \textbf{overleaf}. Only we
 \section{Global Method Description}
 
 We proposed Parallel RFDN (PRFDN) as is shown in figure \ref{fig:PRFDN}.
-Our method consists of four stages to transform a pre-trained RFDN into PRFDN.
+Our method consists of four stages to transform a pre-trained RFDN\cite{liu2020residual} into PRFDN.
 \begin{enumerate}
     \item Branching. To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
     \item Training. Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.

@@ -139,47 +139,70 @@ The factsheet should contain the following information. Most importantly, you sh
 
 \subsection{Method details}
 
-You should describe your proposed solution in detail. This part is equivalent to the methodology part of a conference paper submission. The description should cover the following details.
+We proposed Parallel RFDN (PRFDN) as is shown in figure \ref{fig:PRFDN}.
+Our method consists of four stages to transform a pre-trained RFDN\cite{liu2020residual} into PRFDN.
+\begin{enumerate}
+    \item Branching. To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
+    \item Training. Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
+    \item Re-parametrization. Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Re-parametrization}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
+    \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
+\end{enumerate}
 
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{\linewidth}
+		\centering
+        \framebox{}
+        \caption{RFDN}
+        \label{fig:RFDN}
+    \end{subfigure}
+    \begin{subfigure}[b]{\linewidth}
+		\centering
+        \framebox{}
+        \caption{Branching}
+        \label{fig:Branching}
+    \end{subfigure}
+    \begin{subfigure}[b]{\linewidth}
+		\centering
+        \framebox{}
+        \caption{Re-parametrization}
+        \label{fig:Re-parametrization}
+    \end{subfigure}
+    \begin{subfigure}[b]{\linewidth}
+		\centering
+        \framebox{}
+        \caption{Pruning}
+        \label{fig:Pruning}
+    \end{subfigure}
+    \caption{Transform a pre-trained RFDN into PRFDN}
+    \label{fig:PRFDN}
+\end{figure}
+
+
+\section{Technical details}
 \begin{itemize}
-\item General method description (How is the network designed.)                                
-%\item Description of the particularities of the solutions deployed for each of the challenge competitions or tracks
-\item Representative image / diagram / pipeline of the method(s)  
-\item Training strategy
-\item Experimental results
-\item References                                               
+    \item Language: Python
+    \item Framework: Pytorch, Torch-Pruning\cite{fang2023depgraph}
+    \item Optimizer: AdaM
+    \item Learning rate\\Before re-parametrization: 1e-5 in general, if the loss cannot decrease after a lot of epochs, then descrease to 5e-6\\After re-parametrization: 1e-6
+    \item GPU: RTX 3070 8G
+    \item Datasets for training: LSDIR and DIV2K
 \end{itemize}
-
-Additionally, you can refer to the following items to detail your description.
-\begin{itemize}
-\item Total method complexity (number of parameters, FLOPs, GPU memory consumption, number of activations, runtime)
-\item Which pre-trained or external methods / models have been used (for any stage, if any) 
-\item Which additional data has been used in addition to the provided NTIRE training and validation data (at any stage, if any) 
-\item Training description
-\item Testing description
-\item Quantitative and qualitative advantages of the proposed solution
-\item Results of the comparison to other approaches (if any)
-\item Results on other benchmarks (if any)
-\item Novelty degree of the solution and if it has been previously published
-\item It is OK if the proposed solution is based on other works (papers, reports, Internet sources (links), etc). It is ethically wrong and a misconduct if you are not properly giving credits and hide this information.
-\end{itemize}
-
-% \section{Technical details}
-% \begin{itemize}
-% \item Language and implementation details (including platform, memory, parallelization requirements)
-% \item Human effort required for implementation, training and validation?
-% \item Training/testing time? Runtime at test per image (\textbf{including ensemble}).
-% \item Comment the robustness and generality of the proposed solution(s)? 
-% % Is it easy to deploy it for other sets of downscaling operators? 
-% \item Comment the efficiency of the proposed solution(s)?
-% \end{itemize}
 
 \section{Other details}
 \begin{itemize}
-\item Planned submission of a solution(s) description paper at NTIRE 2023 workshop.
+\item Planned submission of a solution(s) description paper at NTIRE 2023 workshop. YES
 \item General comments and impressions of the NTIRE 2023 challenge. 
+
+Positive impression: Scripts for running the models and measuring metrics are well organized.
+
+Negative impression: Instructions are not clear (e.g. there are some posts in the forum saying that they cannot find the test set, but none of the organizers respond).
+
+A small suggestion: Create a group in instant messaging apps (e.g. Discord or Telegram) for convenient communication.
+
 \item What do you expect from a new challenge in image restoration, enhancement and manipulation?
-\item Other comments: encountered difficulties, fairness of the challenge, proposed subcategories, proposed evaluation method(s), etc.
+Real-time video super-resolution; Efficient compressed video restoration.
+\item Other comments: encountered difficulties, fairness of the challenge, proposed subcategories, proposed evaluation method(s), etc. N/A
 \end{itemize}
 
 %%%%%%%%% REFERENCES
