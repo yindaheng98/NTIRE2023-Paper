@@ -139,44 +139,11 @@ The factsheet should contain the following information. Most importantly, you sh
 
 \subsection{Method details}
 
-We proposed Parallel RFDN (PRFDN) as is shown in figure \ref{fig:PRFDN}.
-Our method consists of four stages to transform a pre-trained RFDN\cite{liu2020residual} into PRFDN.
-\begin{enumerate}
-    \item Branching. To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
-    \item Training. Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
-    \item Re-parametrization. Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Re-parametrization}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
-    \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
-\end{enumerate}
-
-\begin{figure*}
-    \centering
-    \begin{subfigure}[b]{0.246\linewidth}
-		\centering
-        \includegraphics[width=\textwidth]{../RFDN.pdf}
-        \caption{RFDN}
-        \label{fig:RFDN}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.2476\linewidth}
-		\centering
-        \includegraphics[width=\textwidth]{../Branching.pdf}
-        \caption{Branching}
-        \label{fig:Branching}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.246\linewidth}
-		\centering
-        \includegraphics[width=\textwidth]{../Re-parametrization.pdf}
-        \caption{Re-parametrization}
-        \label{fig:Re-parametrization}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.246\linewidth}
-		\centering
-        \includegraphics[width=\textwidth]{../Pruning.pdf}
-        \caption{Pruning}
-        \label{fig:Pruning}
-    \end{subfigure}
-    \caption{Transform a pre-trained RFDN into PRFDN}
-    \label{fig:PRFDN}
-\end{figure*}
+We improve RFDN\cite{liu2020residual} model based on the "Train Big, Then Compress" theory proposed by \cite{li2020trainlarge}.
+We first expand all channels of operation in RFDN exclude pixelshuffle operation with 2x factor and then train it which is a big model training and achieved better results for its larger model capacity.
+After training, a heavy compression followed.
+We utilize a dynamic structure pruning method\cite{fang2023depgraph} to compress model and finetune it iteratively.
+% TODO: add detailed configuration and hyperparameters.
 
 
 \section{Technical details}
