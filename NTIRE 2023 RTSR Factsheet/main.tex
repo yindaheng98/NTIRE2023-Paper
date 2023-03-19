@@ -95,36 +95,23 @@ g) factsheet attached. You can also provide a link to \textbf{overleaf}. Only we
 
 \begin{itemize}
 \item Title of the contribution\\PRFDN: High Parallelism Distillation Network For Image Super-resolution
-\item General method description (Summary)\\Our methods
-\item References                                               
-\item have you tested previously published methods? (yes/no) If yes, please specify which methods and the results/problems you found.
-\item Other methods and baselines tested (even if results were not top competitive).\\We have tested % TODO: 通道扩增
+\item General method description (Summary)\\We proposed Parallel RFDN (PRFDN) based on the pre-trained RFDN\cite{liu2020residual} as is shown in figure \ref{fig:PRFDN}. Our method disentangles the sequentially computed trunks in RFDN into branches (figure \ref{fig:Branching}) and performs re-parametrization to make these branches inference in parallel on single devices. After that, we further perform pruning on the model (figure \ref{fig:Pruning}) and finetune it to achieve higher performance.
+\item References: RFDN\cite{liu2020residual}, Torch-Pruning\cite{fang2023depgraph}
+\item have you tested previously published methods? (yes/no) If yes, please specify which methods and the results/problems you found. N/A
+\item Other methods and baselines tested (even if results were not top competitive). N/A
 \end{itemize}
 
 \section{Global Method Description}
-% TODO: 参照去年的文章来，一页纸就够
-We proposed Parallel RFDN (PRFDN) as is shown in Fig.\ref{fig:PRFDN}.
-Our method consists of three stages to transform a pre-trained RFDN into PRFDN.
+
+We proposed Parallel RFDN (PRFDN) as is shown in figure \ref{fig:PRFDN}.
+Our method consists of four stages to transform a pre-trained RFDN into PRFDN.
 \begin{enumerate}
     \item Branching. To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
     \item Training. Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
-    \item Re-parametrization. Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Branching}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
-    \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used torch-pruning to prune the model and finetune the model between each pruning step. %TODO: 需要cite
+    \item Re-parametrization. Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Re-parametrization}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
+    \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
 \end{enumerate}
 
-\begin{itemize}
-\item Which pre-trained or external methods / models have been used (for any stage, if any) \\ Our method is based on the pre-trained RFDN baseline.
-\item Which datasets did you use for training? How did you pre-process the dataset? \\ We combined the training set of LSDIR, DIV2K, Flickr2K and OST as our training set, and take the validating set of DIV2K for validation.
-\item Training and Inference description \\ 
-\item Model optimization: how did you design your efficient model? do you use pruning? re-parametrization?
-\item Quantitative and qualitative advantages of the solution (optional): N/A
-\item Results of the comparison to other approaches (if any): N/A
-\item Results on other benchmarks (if any): N/A
-\item Novelty degree of the solution and if it has been previously published
-\end{itemize}
-
-
-PLEASE ADD A DIAGRAM.
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.49\linewidth}
@@ -151,11 +138,9 @@ PLEASE ADD A DIAGRAM.
         \caption{Pruning}
         \label{fig:Pruning}
     \end{subfigure}
-    \caption{YOUR DIAGRAM HERE}
+    \caption{Transform a pre-trained RFDN into PRFDN}
     \label{fig:PRFDN}
 \end{figure}
-
-It is OK if the proposed solution is based on other works (papers, reports, Internet sources (links), etc), please \textbf{cite} them.
 
 \vspace{4mm}
 Please fill the following table specifying the technical information (besides writing it), should take 1 minute. 
@@ -173,7 +158,7 @@ Please fill the following table specifying the technical information (besides wr
     \begin{tabular}{c|c|c|c|c|c|c}
         Input & Training Time & Attention & Quantization & \# Params. (M) & GPU  \\
         \hline
-         (256,256,3) & 12h & Yes/No & Yes/No & 5 Million & A100
+         (256,256,3) & 12h & No & Yes & 5 Million & RTX 3070 8G
     \end{tabular}
     }
     \caption{FILL THIS TABLE PLEASE}
@@ -181,20 +166,42 @@ Please fill the following table specifying the technical information (besides wr
 \end{table}
 
 \section{Technical details}
-Please make sure to write about the language and implementation details: framework, optimizer, learning rate, GPU, datasets used for training, training time, training strategies, efficiency optimization strategies.
+\begin{itemize}
+    \item Language: Python
+    \item Framework: Pytorch, Torch-Pruning\cite{fang2023depgraph}
+    \item Optimizer: AdaM
+    \item Learning rate: 1e-5 before re-parametrization, 1e-6 after re-parametrization
+    \item GPU: RTX 3070 8G
+    \item Datasets for training: LSDIR and DIV2K
+\end{itemize}
 
 \vspace{4mm}
 \noindent Any particularities of the solution for this competition in comparison to other SR challenges (if applicable).
+N/A
 
 \section{Other details}
 \begin{itemize}
 
 \item Planned submission of a solution(s) description paper at NTIRE 2023 workshop [YES/ NO].
+YES
 
 \item General comments and impressions of the NTIRE 2023 Real-Time Super-Resolution Challenge (we appreciate your feedback to improve in future editions).
 
+Positive impression: Scripts for running the models and measuring metrics are well organized.
+
+Negative impression: Instructions are not clear (e.g. there are some posts in the forum saying that they cannot find the test set, but none of the organizers respond).
+
+A small suggestion: Create a group in instant messaging apps (e.g. Discord or Telegram) for convenient communication.
+
 \item What do you expect from a new challenge in image restoration, enhancement and manipulation?
+Real-time video super-resolution; Efficient compressed video restoration.
 
 \end{itemize}
 
+
+%%%%%%%%% REFERENCES
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{egbib}
+}
 \end{document}
