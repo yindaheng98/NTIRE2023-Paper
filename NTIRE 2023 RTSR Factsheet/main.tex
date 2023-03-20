@@ -155,10 +155,11 @@ Please fill the following table specifying the technical information (besides wr
 \begin{table}[]
     \centering
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{c|c|c|c|c|c|c}
-        Input & Training Time & Attention & Quantization & \# Params. (M) & GPU  \\
+    \begin{tabular}{c|c|c|c|c|c|c|c}
+        Track & Input & Training Time & Attention & Quantization & \# Params. (M) & GPU  \\
         \hline
-         (256,256,3) & 12h & No & Yes & 5 Million & RTX 3070 8G
+        1 & (678,1020,3) & 16h & No & No & 0.0299 Million & RTX 3070 8G \\
+        2 & (512,680,3) & 16h & No & No & 0.0629 Million & RTX 3070 8G \\
     \end{tabular}
     }
     \caption{FILL THIS TABLE PLEASE}
