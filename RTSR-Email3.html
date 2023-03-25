@@ -1,0 +1,68 @@
+To
+
+marcos.conde@uni-wuerzburg.de;eduard-sebastian.zamfir@uni-wuerzburg.de;radu.timofte@uni-wuerzburg.de;
+
+CC
+
+bjchen@seu.edu.cn;myliu@seu.edu.cn;
+
+<Title>NTIRE 2023 Real-Time Super-Resolution Challenge - SEU_CNII</Title>
+
+<p>Dear organizers:</p>
+
+<p>
+    Apologize for our unclear instruction.
+    I am writing to give some explaination about our code.
+</p>
+
+<h3>How to load our model</h3>
+
+<p>
+    We have modified our code following the guidelines you give.
+    The function <code>srmodel()</code> has been put in <code>arch.py</code> and the <code>checkpoint.pth</code> has been included according to the guidelines.
+    To run our code, you should extract <code>models/</code>,<code>arch.py</code> and <code>checkpoint.pth</code> from
+    our submitted zip file, and put them in the same directory with your test code:
+
+<pre>
+|--- models/
+|--- arch.py
+|--- checkpoint.pth
+|--- your-test-code.py
+</pre>
+
+in <code>your-test-code.py</code> you can write:
+
+<pre>
+from arch import srmodel
+model = srmodel()
+</pre>
+
+to load our model.
+</p>
+
+<h3>Why our model should be loaded directly by <code>model = torch.load('checkpoint.pth')</code></h3>
+
+<p>
+    Essentially, our Track 1 model is in <code>models/rfdn_half/RFDNB4S.py</code> and Track 2 model is in <code>models/rfdn_half/RFDNB2S.py</code>.
+    You can load them by
+
+<pre>
+from models.rfdn_half.RFDNB4S import RFDNB4S_P
+model = RFDNB4S_P() # Track 1
+</pre>
+
+<pre>
+from models.rfdn_half.RFDNB2S inport RFDNB2S_P
+model = RFDNB2S_P() # Track 2
+</pre>
+
+But since we applied auto-pruning to our model, state dict in <code>checkpoint.pth</code> could not be loaded into
+the original model.
+That is why you should directly load the model by <code>model = torch.load('checkpoint.pth')</code>(as is written in our <code>arch.py</code>).
+</p>
+
+<p>
+    Best Regards
+    <br>
+    Daheng Yin
+</p>
