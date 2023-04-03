@@ -77,51 +77,33 @@ First line of institution2 address\\
 \section{Introduction}
 \label{sec:intro}
 
+Single image super-resolution (SISR) is a computer vision technique to reconstruct high-resolution images from low-resolution images. Deep convolution neural networks have shown impressive performance in this area and many deep learning-based methods have been proposed to address this ill-posed problem.
+This technique has been used in many applications (e.g. video gaming and video streaming) to achieve displays with high resolution and high refresh rates and some of the related applications have been deployed on lots of mobile devices.
+However, mobile phones have a power-constrained design with a dedicated power supply, which makes efficient image super-resolution (EISR) a growing interest.
+
+Efficient network design is key to achieving better performance in EISR.
+To make the network more efficient for resource-limited devices, researchers are designing generic lightweight networks with reduced parameters through methods like network pruning and knowledge distillation.
+However, when the model size becomes sufficiently small, these methods fail to further increase the frame rate of super-resolution. This is because reducing the computational scale of each layer of the model beyond the point where the GPU is fully loaded does not improve the inference speed of the model, if the length of serial executed layers cannot be reduced.
+Therefore, some EISR design involves careful consideration of network architecture, design, and utilization of limited features to generate more representative features for super-resolution, which can use fewer layers to achieve a good super-resolution quality.
+
+Moreover, recent years have witnessed the wide use of U-Net in the design of deep neural networks. 
+Many designs of the EISR model also adopted the U-Net architecture, and the RFDN\cite{liu2020residual} is a representative example, which won the first prize in the AIM 2020 competition. 
+Through the observation of the U-Net structure, we found that the model's main structure can be transformed into mutually independent branches by deconstructing its branching structure, thereby increasing parallelism. 
+Furthermore, multiple branches can be executed in parallel on the same GPU by reparameterization. 
+Within the GPU's capacity, this method can reduce the number of layers that are executed serially in the network, therefore improving the inference speed.
+
+In this paper, we proposed Parallel RFDN (PRFDN) based on the pre-trained RFDN. Our method disentangles the sequentially computed trunks in RFDN into branches and performs re-parametrization to make these branches inference in parallel on single devices. After that, we further perform pruning on the model and finetune it to achieve higher performance.
+
+
 Please follow the steps outlined below when submitting your manuscript to the IEEE Computer Society Press.
 This style guide now has several important modifications (for example, you are no longer warned against the use of sticky tape to attach your artwork to the paper), so all authors should read this new version.
-
-%-------------------------------------------------------------------------
-\subsection{Language}
-
-All manuscripts must be in English.
-
-\subsection{Dual submission}
-
-Please refer to the author guidelines on the \confName\ \confYear\ web page for a
-discussion of the policy on dual submissions.
-
-\subsection{Paper length}
-Papers, excluding the references section, must be no longer than eight pages in length.
-The references section will not be included in the page count, and there is no limit on the length of the references section.
-For example, a paper of eight pages with two pages of references would have a total length of 10 pages.
-{\bf There will be no extra page charges for \confName\ \confYear.}
-
-Overlength papers will simply not be reviewed.
-This includes papers where the margins and formatting are deemed to have been significantly altered from those laid down by this style guide.
-Note that this \LaTeX\ guide already sets figure captions and references in a smaller font.
-The reason such papers will not be reviewed is that there is no provision for supervised revisions of manuscripts.
-The reviewing process cannot determine the suitability of the paper for presentation in eight pages if it is reviewed in eleven.
-
-%-------------------------------------------------------------------------
-\subsection{The ruler}
-The \LaTeX\ style defines a printed ruler which should be present in the version submitted for review.
-The ruler is provided in order that reviewers may comment on particular lines in the paper without circumlocution.
-If you are preparing a document using a non-\LaTeX\ document preparation system, please arrange for an equivalent ruler to appear on the final output pages.
-The presence or absence of the ruler should not change the appearance of any other content on the page.
-The camera-ready copy should not contain a ruler.
-(\LaTeX\ users may use options of cvpr.sty to switch between different versions.)
-
-Reviewers:
-note that the ruler measurements do not align well with lines in the paper --- this turns out to be very difficult to do well when the paper contains many figures and equations, and, when done, looks ugly.
-Just use fractional references (\eg, this line is $087.5$), although in most cases one would expect that the approximate location will be adequate.
-
 
 \subsection{Paper ID}
 Make sure that the Paper ID from the submission system is visible in the version submitted for review (replacing the ``*****'' you see in this document).
 If you are using the \LaTeX\ template, \textbf{make sure to update paper ID in the appropriate place in the tex file}.
 
 
-\subsection{Mathematics}
+\subsection{Methods}
 
 Please number all of your sections and displayed equations as in these examples:
 \begin{equation}
