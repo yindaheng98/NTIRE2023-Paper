@@ -14,6 +14,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{bm}
 
 
 % It is strongly recommended to use hyperref, especially for the review version.
@@ -96,7 +97,7 @@ Therefore, lots of EISR designs\cite{liNTIRE2022Challenge2022,duFastMemoryEffici
 
 Moreover, recent years have witnessed the wide use of U-Net\cite{ronnebergerUNetConvolutionalNetworks2015} in the design of deep neural networks. 
 Many designs of the EISR model also adopted the U-Net architecture, and the RFDN\cite{liu2020residual} is a representative example, which won the first prize in the AIM 2020 competition. 
-Through the observation of the U-Net structure, we found that the model's main structure can be transformed into mutually independent branches by deconstructing its branching structure, thereby increasing parallelism. 
+Through the observation of the U-Net structure, we found its main structure can be transformed into mutually independent branches by deconstructing its branching structure, thereby increasing parallelism. 
 Furthermore, multiple branches can be executed in parallel on the same GPU by reparameterization. 
 Within the GPU's capacity, this method can reduce the number of layers that are executed serially in the network, therefore improving the inference speed.
 
@@ -113,13 +114,79 @@ We proposed Parallel RFDN (PRFDN) as is shown in figure \ref{fig:PRFDN}.
 Our method consists of four stages to transform a pre-trained RFDN\cite{liu2020residual} into PRFDN.
 
 \subsection{Branching}
-To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
+To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. 
+According to our observation, the main structure of U-Net can be transformed into mutually independent branches to increase parallelism. 
+Our method disentangles the sequentially computed trunks of RFDN into branches. 
+As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. 
+To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
+% This type of block 用于拟合多层RFDB的输出结果，使得输入到被展开后的RFDB block的输入与其在原始模型中接收的输入相近，从而以一个较小的代价保证模型精度
+This type of block is utilized to fit the output of cascaded RFDBs, such that the input to the disentangled RFDB block closely resembles the input received in the original RFDN.
+This ensures model accuracy at a reduced cost.
 
 \subsection{Training}
-Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
+Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). 
+To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
+In this step, we first trained only SRFDBs for 100 epochs (on LSDIR dataset and DIV2K dataset) with freeze parameters in RFDBs, and then trained the whole model for 100 epochs.
 
 \subsection{Re-parametrization}
-Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Re-parametrization}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
+Without much data dependency, branches in our model can be computed in parallel. 
+However, a single GPU cannot compute two or more different models in parallel. 
+To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. 
+As is shown in figure \ref{fig:Branching}, three of these four branches have exactly the same structure with only different parameters, and the only difference between the remaining branch and the other branches is the absence of an RFDBS.
+Therefore, we should 1) merge those four convolution layers at the beginning of the branches into one, 2) merge those three RFDBS into one, and 3) merge those four RFDBs into one.
+
+In our method, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them.
+More specifically, we merge the convolution layers according to the following derivation.
+
+Assuming $Y=Conv(X, K)$ represents a convolution layer,
+where $K\in\mathbb{R}^{c_o\times c\times h_k\times w_k}$ is the convolution kernel; $X\in\mathbb{R}^{c\times h\times w}$ is the input of convolution layer and $Y\in\mathbb{R}^{c_o\times h'\times w'}$ is the output; 
+$c$, $h$, $w$ are the channel, height, and width of the input respectively; 
+$c_o$, $h'$, $w'$ are the channel, height, and width of the output respectively;
+$h_k$ and $w_k$ are the height and width of the kernel respectively.
+If we want to merge $n$ convolution layers $Y_i=Conv(X_i, K_i)$ into a big convolution layer $Conv_b$, this $Conv_b$ can be represented as:
+\begin{equation}
+  \begin{aligned}
+    Y&=Conv_b([X_1,\dots,X_n], K_1,\dots,K_n)\\
+    &=[Y_1,\dots,Y_n]\\
+    &=\sum_{i=1}^n[\bm 0,\dots,Y_i,\dots,\bm 0]\\
+    &=\sum_{i=1}^n[\bm 0,\dots,Conv(X_i, K_i),\dots,\bm 0]\\
+    &=Conv([X_1,\dots,X_n], 
+    \begin{bmatrix}
+      K_1 & \bm 0 & \dots & \bm 0 \\
+      \bm 0 & K_2 & \dots & \bm 0 \\
+      \vdots & \vdots & \ddots & \vdots \\
+      \bm 0 & \bm 0 & \dots & K_n \\
+    \end{bmatrix})\\
+    &=Conv(X_{concat}, K_{diag})
+  \end{aligned}
+\end{equation}
+
+Therefore, when computing the merged convolution layer $Conv_b$, all the input $X_i, i\in[1,n]$ would be concatenated into $X_{concat}$ and all the kernel $K_i, i\in[1,n]$ would be re-parameterized into $K_{diag}$ (in first two dimensions) before performing a normal convolution operation.
+
+The re-parametrization was implemented as follows:
+\begin{verbatim}
+def merge_conv(convs, c, c_o, k, **kwargs):
+  n = len(convs)
+  conv = nn.Conv2d(c*n, c_o*n, k, **kwargs)
+  for i, j in product(range(n), range(n)):
+    if j == i:
+      conv.weight[j*c_o:(j+1)*c_o,
+                  i*c:(i+1)*c,
+                  ...] = \
+        convs[i].weight
+    else:
+      conv.weight[j*c_o:(j+1)*c_o,
+                  i*c:(i+1)*c,
+                  ...] = \
+        torch.zeros(convs[i].weight.shape)
+  for i in range(n):
+      conv.bias[i*c_o:(i+1)*c_o] = \
+        convs[i].bias
+  return conv
+\end{verbatim}
+
+As is shown in figure \ref{fig:Re-parametrization}, we merge and re-parametrize the RFDBs and SRFDBs into a single branch. 
+After re-parameterization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
 
 \subsection{Pruning}
 The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
