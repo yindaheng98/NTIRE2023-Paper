@@ -86,25 +86,21 @@ First line of institution2 address\\
 \label{sec:intro}
 
 Single image super-resolution (SISR) is a computer vision technique to reconstruct high-resolution images from low-resolution images. Deep convolution neural networks have shown impressive performance in this area and many deep learning-based methods have been proposed to address this ill-posed problem.
-This technique has been used in many applications (e.g. video gaming and video streaming) to achieve displays with high resolution and high refresh rates and some of the related applications have been deployed on lots of mobile devices.
+This technique has been used in many applications (e.g. video gaming\cite{10.1145/2751496.2751502} and video streaming\cite{kimNeuralEnhancedLiveStreaming2020,yeoNeuralAdaptiveContentaware2018,maoNeuralAdaptiveVideo2017}) to achieve displays with high resolution and high refresh rates and some of the related applications have been deployed on lots of mobile devices\cite{yeoNEMOEnablingNeuralenhanced2020,mehtaEVRNetEfficientVideo2021}.
 However, mobile phones have a power-constrained design with a dedicated power supply, which makes efficient image super-resolution (EISR) a growing interest.
 
 Efficient network design is key to achieving better performance in EISR.
-To make the network more efficient for resource-limited devices, researchers are designing generic lightweight networks with reduced parameters through methods like network pruning and knowledge distillation.
-However, when the model size becomes sufficiently small, these methods fail to further increase the frame rate of super-resolution. This is because reducing the computational scale of each layer of the model beyond the point where the GPU is fully loaded does not improve the inference speed of the model, if the length of serial executed layers cannot be reduced.
-Therefore, some EISR design involves careful consideration of network architecture, design, and utilization of limited features to generate more representative features for super-resolution, which can use fewer layers to achieve a good super-resolution quality.
+To make the network more efficient for resource-limited devices, researchers are designing generic lightweight networks with reduced parameters through methods like network pruning\cite{liuSplitSREndtoEndApproach2021,leeMobiSREfficientOnDevice2019,fang2023depgraph}, parallelism\cite{sandlerMobileNetV2InvertedResiduals2019,howardMobileNetsEfficientConvolutional2017,liuSplitSREndtoEndApproach2021,kongClassSRGeneralFramework2021} and knowledge distillation\cite{liu2020residual,khaniRealTimeVideoInference2021,taoCompressionGenerativePretrained2022,zhangDataFreeKnowledgeDistillation2021}.
+However, when the model size becomes sufficiently small, these methods fail to further increase the frame rate of super-resolution. This is because reducing the computational scale of each layer of the model beyond the point where the GPU is fully loaded does not improve the inference speed of the model, if the length of serially executed layers cannot be reduced.
+Therefore, lots of EISR designs\cite{liNTIRE2022Challenge2022,duFastMemoryEfficientNetwork2022,mehtaEVRNetEfficientVideo2021} involve careful consideration of network architecture, design, and utilization of limited features to generate more representative features for super-resolution, which can use fewer layers to achieve a good super-resolution quality.
 
-Moreover, recent years have witnessed the wide use of U-Net in the design of deep neural networks. 
+Moreover, recent years have witnessed the wide use of U-Net\cite{ronnebergerUNetConvolutionalNetworks2015} in the design of deep neural networks. 
 Many designs of the EISR model also adopted the U-Net architecture, and the RFDN\cite{liu2020residual} is a representative example, which won the first prize in the AIM 2020 competition. 
 Through the observation of the U-Net structure, we found that the model's main structure can be transformed into mutually independent branches by deconstructing its branching structure, thereby increasing parallelism. 
 Furthermore, multiple branches can be executed in parallel on the same GPU by reparameterization. 
 Within the GPU's capacity, this method can reduce the number of layers that are executed serially in the network, therefore improving the inference speed.
 
 In this paper, we proposed Parallel RFDN (PRFDN) based on the pre-trained RFDN. Our method disentangles the sequentially computed trunks in RFDN into branches and performs re-parametrization to make these branches inference in parallel on single devices. After that, we further perform pruning on the model and finetune it to achieve higher performance.
-
-
-Please follow the steps outlined below when submitting your manuscript to the IEEE Computer Society Press.
-This style guide now has several important modifications (for example, you are no longer warned against the use of sticky tape to attach your artwork to the paper), so all authors should read this new version.
 
 \subsection{Paper ID}
 Make sure that the Paper ID from the submission system is visible in the version submitted for review (replacing the ``*****'' you see in this document).
@@ -115,12 +111,18 @@ If you are using the \LaTeX\ template, \textbf{make sure to update paper ID in t
 
 We proposed Parallel RFDN (PRFDN) as is shown in figure \ref{fig:PRFDN}.
 Our method consists of four stages to transform a pre-trained RFDN\cite{liu2020residual} into PRFDN.
-\begin{enumerate}
-    \item Branching. To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
-    \item Training. Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
-    \item Re-parametrization. Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Re-parametrization}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
-    \item Pruning. The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
-\end{enumerate}
+
+\subsection{Branching}
+To accelerate the inference, we first consider reducing the data dependency in the model to achieve higher parallelism. Our method disentangles the sequentially computed trunks into branches. As is shown in figure \ref{fig:Branching}, after the branching, the major part of the model will consist of four independent branches that can calculate in parallel. To improve the accuracy, we also design a small SR block (SRFDB) based on the RFDB of RFDN and add them before the input of each branch. 
+
+\subsection{Training}
+Since we only change the data flow but not the structure of RFDB, the pre-trained RFDN parameters can still be loaded into the major part of our branch model (only except for those SRFDBs). To benefit from the pre-training, we load the pre-trained RFDN parameters into our branch model before training our branch model.
+
+\subsection{Re-parametrization}
+Without much data dependency, branches in our model can be computed in parallel. However, a single GPU cannot compute two or more different models in parallel. To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. As is shown in figure \ref{fig:Re-parametrization}, we realize that the major part of these four branches (RFDBs and SRFDBs) have exactly the same structure but different parameters, so we merge and re-parametrized the RFDBs and SRFDBs into a single branch. More specifically, we create a bigger RFDB and a bigger SRFDB with bigger convolution layers and move the weight and bias from the RFDBs and SRFDBs into them. After re-parametrization, we get a bigger model that is equivalent to that of the branches of the branch model computed in parallel on a single GPU.
+
+\subsection{Pruning}
+The re-parametrized model is big. To further accelerate the inference, we applied channel pruning on our re-parametrized model, as is shown in figure \ref{fig:Pruning}. To accurately extract the channel dependency for pruning, we first replace each concatenate and split operation with an equivalent convolution operation. After replacement, we used Torch-Pruning\cite{fang2023depgraph} to prune the model and finetune the model between each pruning step.
 
 \begin{figure*}
     \centering
