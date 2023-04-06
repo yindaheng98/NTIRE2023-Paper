@@ -46,7 +46,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{\LaTeX\ Author Guidelines for \confName~Proceedings}
+\title{Expand Big, Then Shrink: An Automatic Way to Generating Efficient Super Resolution Model}
 
 
 \author{Daheng Yin, Mengyang Liu, Baijun Chen, Fang Dong\\
@@ -58,7 +58,7 @@ School of Computer Science and Engineering, Southeast University, Nanjing, China
 %%%%%%%%% ABSTRACT
 \begin{abstract}
   Super-resolution techniques have become increasingly popular in recent years due to their ability to generate high-resolution images from low-resolution counterparts, which is an ill-posed problem in computer vision. Deep convolutional neural networks have shown exceptional performance in Single Image Super-Resolution (SISR), leading to the development of numerous deep learning-based methods. However, with mobile devices becoming a ubiquitous part of everyday life, there is a growing interest in developing Efficient Image Super-Resolution (EISR) methods that are computationally efficient and can produce high-quality images on mobile devices. This paper proposes a model-scaling based method to design an efficient model structure automatically. The "Expand Big, Then Shrink" method expands an old SOTA model to a new, larger dataset and then shrinks it, resulting in a more efficient model structure.
-  % TODO: 补充一句实验结果 Our proposed method demonstrates improved performance in terms of FLOPs reduction and PSNR scores compared to state-of-the-art methods.
+  Our proposed method demonstrates improved performance in terms of FLOPs reduction and PSNR scores compared to existing methods. We get 4.3\% and 8.9\% improvement of PSNR and SSIM respectively. Our approach achieved a low average test and validation time of 40.84ms.
   The study's contributions include a discussion of how to design an efficient model in an automatic way, the proposed method to adapt an old SOTA model to a new, bigger dataset, and evaluation of the method on mainstream datasets.
 \end{abstract}
 
@@ -68,12 +68,12 @@ School of Computer Science and Engineering, Southeast University, Nanjing, China
 
 Single Image Super-Resolution (SISR) aims to reconstruct high-resolution images from their low-resolution counterparts, which is an ill-posed problem in computer vision. Over the years, deep convolutional neural networks have demonstrated remarkable performance in this domain, leading to the development of many deep learning-based methods. SISR has found widespread applications, including video gaming and video streaming, where high-resolution displays with high refresh rates are crucial. In particular, mobile devices have benefited from SISR techniques to enhance the user experience. However, mobile phones' power-constrained design with a limited power supply has made Efficient Image Super-Resolution (EISR) a topic of growing interest. Therefore, there is a need to explore EISR methods that are computationally efficient and can produce high-quality images on mobile devices.
 
-Designing an efficient model is non-trivial and always tedious. On one hand, lots of existing work look for insights for reducing FLOPs on operations but which always ignoring realistic execution on chip. On the other hand, the macro architecture design of model is also important such as using multiple connection, multiple resolution and local sharing. The space to designing a SOTA model is too large and it's always fatigued to update model with complex design over and over.
+Designing an efficient model is non-trivial and always tedious. On one hand, lots of existing work look for insights for reducing FLOPs on operations but which always ignores realistic execution on chip. On the other hand, the macro architecture design of model is also important such as using multiple connections, multiple resolutions, and local sharing. The space to design a SOTA model is too large and it's always fatiguing to update model with complex design over and over.
 
 In this paper, we proposed a model-scaling based method to generate a more efficient model structure by an automatic procedure: first expanding and then shrinking.\ref{fig:overview}
 
 % TODO: 写一段结果
-Introduction of evaluation results.
+Our proposed method demonstrates superior performance in terms of reducing the number of floating-point operations (FLOPs) and improving the peak signal-to-noise ratio (PSNR) scores compared to existing methods. Specifically, our approach shows a 4.3\% improvement in PSNR and an 8.9\% improvement in structural similarity index (SSIM). Furthermore, our method achieves a low average testing and validation time of 40.84ms.
 
 The main contributions of this work are as follows:
 
@@ -155,7 +155,7 @@ We used simple universal scaling methods to expand and shrink model structure bu
     \includegraphics[width=\textwidth]{../x4result.pdf}
     \end{center}
     \caption{Comparison of image quality between our method and the bicubic method.}
-    \label{yolov3}
+    \label{fig:result}
 \end{figure*}
 
 \section{Experimental Evaluation}
@@ -213,9 +213,9 @@ To evaluate the performance of our algorithm, we used two commonly used evaluati
     \label{tab-quality}
 \end{table}%
 \subsection{Results}
-Our approach achieves high PSNR and SSIM. Compared with the bicubic interpolation algorithm, we are able to get 4.3\% and 8.9\% improvement of PSNR and SSIM respectively. The results demonstrate the effectiveness of our proposed super-resolution algorithm on high-resolution images. Table \ref{table-result} displays the quality performance of our approach methods on different datasets compared to other methods by PSNR and SSIM scores.
+Our approach achieves high PSNR and SSIM. Compared with the bicubic interpolation algorithm, we are able to get 4.3\% and 8.9\% improvement of PSNR and SSIM respectively. Figure\ref{fig:result} illustrates the comparison between our proposed super-resolution neural network model and conventional methods.The results demonstrate the effectiveness of our proposed super-resolution algorithm on high-resolution images. Table \ref{tab-quality} displays the quality performance of our approach methods on different datasets compared to other methods by PSNR and SSIM scores.
 
-Furthermore, our approach achieves fast validation and test times, indicating its superior computational efficiency. Table \ref{table-time} presents the performance of our proposed approach and state-of-the-art methods on the DIV2K dataset in terms of validation time, test time, average time, and memory consumption. Our approach achieves a fast average time with a result of 40.84ms on the DIV2K dataset. The test time and validation time are also significantly low. Specifically, our approach achieved a low test time of 33.33ms and a validation time of 48.35ms. Our approach's memory consumption is 944.91 MB.
+Furthermore, our approach achieves fast validation and test times, indicating its superior computational efficiency. Table \ref{tab-runtime} presents the performance of our proposed approach and state-of-the-art methods on the DIV2K dataset in terms of validation time, test time, average time, and memory consumption. Our approach achieves a fast average time with a result of 40.84ms on the DIV2K dataset. The test time and validation time are also significantly low. Specifically, our approach achieved a low test time of 33.33ms and a validation time of 48.35ms. Our approach's memory consumption is 944.91 MB.
 
 
 \subsection{Discussion}
