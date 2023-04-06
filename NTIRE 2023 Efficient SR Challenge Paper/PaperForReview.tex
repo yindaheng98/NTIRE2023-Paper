@@ -57,19 +57,22 @@ School of Computer Science and Engineering, Southeast University, Nanjing, China
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-   The ABSTRACT 
+  Super-resolution techniques have become increasingly popular in recent years due to their ability to generate high-resolution images from low-resolution counterparts, which is an ill-posed problem in computer vision. Deep convolutional neural networks have shown exceptional performance in Single Image Super-Resolution (SISR), leading to the development of numerous deep learning-based methods. However, with mobile devices becoming a ubiquitous part of everyday life, there is a growing interest in developing Efficient Image Super-Resolution (EISR) methods that are computationally efficient and can produce high-quality images on mobile devices. This paper proposes a model-scaling based method to design an efficient model structure automatically. The "Expand Big, Then Shrink" method expands an old SOTA model to a new, larger dataset and then shrinks it, resulting in a more efficient model structure.
+  % TODO: 补充一句实验结果 Our proposed method demonstrates improved performance in terms of FLOPs reduction and PSNR scores compared to state-of-the-art methods.
+  The study's contributions include a discussion of how to design an efficient model in an automatic way, the proposed method to adapt an old SOTA model to a new, bigger dataset, and evaluation of the method on mainstream datasets.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 \label{sec:intro}
 
-Introduction of efficient super resolution.
+Single Image Super-Resolution (SISR) aims to reconstruct high-resolution images from their low-resolution counterparts, which is an ill-posed problem in computer vision. Over the years, deep convolutional neural networks have demonstrated remarkable performance in this domain, leading to the development of many deep learning-based methods. SISR has found widespread applications, including video gaming and video streaming, where high-resolution displays with high refresh rates are crucial. In particular, mobile devices have benefited from SISR techniques to enhance the user experience. However, mobile phones' power-constrained design with a limited power supply has made Efficient Image Super-Resolution (EISR) a topic of growing interest. Therefore, there is a need to explore EISR methods that are computationally efficient and can produce high-quality images on mobile devices.
 
 Designing an efficient model is non-trivial and always tedious. On one hand, lots of existing work look for insights for reducing FLOPs on operations but which always ignoring realistic execution on chip. On the other hand, the macro architecture design of model is also important such as using multiple connection, multiple resolution and local sharing. The space to designing a SOTA model is too large and it's always fatigued to update model with complex design over and over.
 
 In this paper, we proposed a model-scaling based method to generate a more efficient model structure by an automatic procedure: first expanding and then shrinking.\ref{fig:overview}
 
+% TODO: 写一段结果
 Introduction of evaluation results.
 
 The main contributions of this work are as follows:
@@ -227,7 +230,7 @@ While our approach showed promising results, some limitations and potential dire
 \section{Conclusion}
 \label{sec:conclud}
 
-Conclusion.
+This paper presents a method for Efficient Image Super-Resolution (EISR) that addresses the need for computationally efficient and high-quality image production on mobile devices. We proposed an automatic model-scaling method, "Expand Big, Then Shrink," which expands and then shrinks an old SOTA model to adapt to a new and bigger dataset. This work contributes to the ongoing efforts in developing efficient models for SISR, which is crucial in various fields, including video gaming, video streaming, and mobile devices. Our proposed method provides a promising direction for future research and applications of EISR.
 
 
 %%%%%%%%% REFERENCES
