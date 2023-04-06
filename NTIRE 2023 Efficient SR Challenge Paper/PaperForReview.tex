@@ -68,7 +68,7 @@ School of Computer Science and Engineering, Southeast University, Nanjing, China
 
 Single Image Super-Resolution (SISR) aims to reconstruct high-resolution images from their low-resolution counterparts, which is an ill-posed problem in computer vision. Over the years, deep convolutional neural networks have demonstrated remarkable performance in this domain, leading to the development of many deep learning-based methods. SISR has found widespread applications, including video gaming and video streaming, where high-resolution displays with high refresh rates are crucial. In particular, mobile devices have benefited from SISR techniques to enhance the user experience. However, mobile phones' power-constrained design with a limited power supply has made Efficient Image Super-Resolution (EISR) a topic of growing interest. Therefore, there is a need to explore EISR methods that are computationally efficient and can produce high-quality images on mobile devices.
 
-Designing an efficient model is non-trivial and always tedious. On one hand, lots of existing work look for insights for reducing FLOPs on operations but which always ignores realistic execution on chip. On the other hand, the macro architecture design of model is also important such as using multiple connections, multiple resolutions, and local sharing. The space to design a SOTA model is too large and it's always fatiguing to update model with complex design over and over.
+Designing an efficient model is non-trivial and always tedious. On one hand, lots of existing work look for insights for reducing FLOPs on operations but which always ignores realistic execution on chip\cite{sandler2018mobilenetv2}\cite{chen2023run}. On the other hand, the macro architecture design of model is also important such as using multiple connections\cite{chollet2017xception}, multiple resolutions\cite{girshick2015fast}, and local sharing\cite{liu2021swin}. The space to design a SOTA model is too large and it's always fatiguing to update model with complex design over and over.
 
 In this paper, we proposed a model-scaling based method to generate a more efficient model structure by an automatic procedure: first expanding and then shrinking.\ref{fig:overview}
 
@@ -79,8 +79,8 @@ The main contributions of this work are as follows:
 
 \begin{itemize}
     \item Discussing on how to design an efficient model in an automatic way.
-    \item Proposing \"Expand Big, Then Shrink\" method to automatic adapting an old SOTA model to a new bigger dataset which is an efficient way to design new model.
-    \item Evaluating our method on main stream datasets and compared our results with other peers in NTIRE-ESRX4 challenge.
+    \item Proposing "Expand Big, Then Shrink" method to automatic adapting an old SOTA model to a new bigger dataset which is an efficient way to design new model.
+    \item Evaluating our method on main stream datasets.
 \end{itemize}
 
 \begin{figure}[t]
@@ -132,7 +132,7 @@ Related work.
 \subsection{Insights on designing efficient model.}
 Lots of work focusing on designing efficient model to achieve SOTA performance on challenges year by year. A big problem under the phenomenon that collecting collect more data and create a new larger dataset for training a bigger and more powerful model is that we always need to update our model to adapt to the new dataset for learning more knowledge than before and also keep its efficiency which is always tedious.
 
-Efficient insights are not easy to find and always ignored some important factors in the advanced computing platforms and due to good performance in theory but bad performance in reality which can happen on running MobileNet on different platforms.
+Efficient insights are not easy to find and always ignored some important factors in the advanced computing platforms and due to good performance in theory but bad performance in reality which can happen on running MobileNet\cite{sandler2018mobilenetv2} on different platforms.
 
 We want to find a method that scaling an existing SOTA efficient model efficiently and effectively. By this way, we can just absorb achievements from efficient model design research and scale them to get a new SOTA in a new dataset.
 
@@ -147,7 +147,7 @@ Prune and finetune description.
 
 \subsection{Rethinking the complexity of expanding and shrinking.}
 
-We used simple universal scaling methods to expand and shrink model structure but still achieving better accuracy-speed trade-off rather than the original model and the most of peers. On one hand, the way we used to expand model is based on width-multiplier which changed the width of all layers with a same scale. On the other hand, the way we used to shrink is a simple $\mathcal{L}1$ norm based pruner and also shrink all layers with a same scale. This result has proven the effectiveness and potency of the idea of "Expand and Shrink" scaling method.
+We used simple universal scaling methods\cite{tan2019efficientnet} to expand and shrink model structure but still achieving better accuracy-speed trade-off rather than the original model and the most of peers. On one hand, the way we used to expand model is based on width-multiplier which changed the width of all layers with a same scale. On the other hand, the way we used to shrink is a simple $\mathcal{L}1$ norm based pruner and also shrink all layers with a same scale. This result has proven the effectiveness and potency of the idea of "Expand and Shrink" scaling method.
 
 %------------------------------------------------------------------------
 \begin{figure*}[t]
