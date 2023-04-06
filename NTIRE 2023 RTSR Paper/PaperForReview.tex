@@ -40,7 +40,7 @@
 
 
 %%%%%%%%% PAPER ID  - PLEASE UPDATE
-\def\cvprPaperID{*****} % *** Enter the CVPR Paper ID here
+\def\cvprPaperID{120} % *** Enter the CVPR Paper ID here
 \def\confName{CVPR}
 \def\confYear{2023}
 
@@ -48,7 +48,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{PRFDN: Reparameterization and Pruning of Disentangled U-Net for Efficient Image Super-resolution}
+\title{PRFDN: Reparameterize and Prune Disentangled U-Net for Efficient Image Super-resolution}
 %多路径
 
 \author{Daheng Yin, Baijun Chen, Mengyang Liu, Fang Dong\\
@@ -63,8 +63,7 @@ School of Computer Science and Engineering, Southeast University, Nanjing, China
   Efficient network design is key to achieving better performance in EISR, and many designs adopt the U-Net architecture. By deconstructing its branching structure, the main structure of the U-Net can be transformed into mutually independent branches, increasing parallelism and reducing the number of layers executed serially in the network to improve inference speed within the GPU's capacity.
   This paper proposed Parallel RFDN (PRFDN) based on the pre-trained RFDN, which is a typical EISR model with a backbone similar to U-Net. 
   Our method disentangles the sequentially computed trunks in RFDN into branches and performs re-parametrization to make these branches inference in parallel on single devices. 
-  After that, we further perform pruning on the model and finetune it to achieve higher performance.
-  %TODO: 补充一句实验结果
+  After that, we further perform pruning on the model and finetune it to achieve higher performance. The method increases the PSNR and SSIM scores by 11.1\% and 13.4\% respectively, compared to the bicubic interpolation algorithm. These results demonstrate the effectiveness of our proposed super-resolution algorithm on high-resolution images. Our method achieves a fast average time with 19.05ms on the DIV2K dataset.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
@@ -87,10 +86,6 @@ Furthermore, multiple branches can be executed in parallel on the same GPU by re
 Within the GPU's capacity, this method can reduce the number of layers that are executed serially in the network, therefore improving the inference speed.
 
 In this paper, we proposed Parallel RFDN (PRFDN) based on the pre-trained RFDN. Our method disentangles the sequentially computed trunks in RFDN into branches and performs re-parametrization to make these branches inference in parallel on single devices. After that, we further perform pruning on the model and finetune it to achieve higher performance.
-
-\subsection{Paper ID}
-Make sure that the Paper ID from the submission system is visible in the version submitted for review (replacing the ``*****'' you see in this document).
-If you are using the \LaTeX\ template, \textbf{make sure to update paper ID in the appropriate place in the tex file}.
 
 
 \subsection{Methods}
@@ -115,7 +110,8 @@ In this step, we first trained only SRFDBs for 100 epochs (on LSDIR dataset and 
 
 \subsection{Re-parametrization}
 Without much data dependency, branches in our model can be computed in parallel. 
-However, a single GPU cannot compute two or more different models in parallel. 
+However, a single GPU cannot compute two or more different models in parallel
+l. 
 To address this issue and achieve parallel computing of multiple branches on a single GPU, we should merge the four branches into a single branch. 
 As is shown in figure \ref{fig:Branching}, three of these four branches have exactly the same structure with only different parameters, and the only difference between the remaining branch and the other branches is the absence of an RFDBS.
 Therefore, we should 1) merge those four convolution layers at the beginning of the branches into one, 2) merge those three RFDBS into one, and 3) merge those four RFDBs into one.
@@ -214,59 +210,20 @@ In our implementation, we prune out 90\% channels from our model in 16 steps, an
     \label{fig:PRFDN}
 \end{figure*}
 
-\noindent
-FAQ\medskip\\
-{\bf Q:} Are acknowledgements OK?\\
-{\bf A:} No.  Leave them for the final copy.\medskip\\
-{\bf Q:} How do I cite my results reported in open challenges?
-{\bf A:} To conform with the double-blind review policy, you can report results of other challenge participants together with your results in your paper.
-For your results, however, you should not identify yourself and should not mention your participation in the challenge.
-Instead present your results referring to the method proposed in your paper and draw conclusions based on the experimental comparison to other results.\medskip\\
-
 %-------------------------------------------------------------------------
-\subsection{References}
-
-List and number all bibliographical references in 9-point Times, single-spaced, at the end of your paper.
-When referenced in the text, enclose the citation number in square brackets, for
-example~\cite{Authors14}.
-Where appropriate, include page numbers and the name(s) of editors of referenced books.
-When you cite multiple papers at once, please make sure that you cite them in numerical order like this \cite{Alpher02,Alpher03,Alpher05,Authors14b,Authors14}.
-If you use the template as advised, this will be taken care of automatically.
-
-\begin{table}
-  \centering
-  \begin{tabular}{@{}lc@{}}
-    \toprule
-    Method & Frobnability \\
-    \midrule
-    Theirs & Frumpy \\
-    Yours & Frobbly \\
-    Ours & Makes one's heart Frob\\
-    \bottomrule
-  \end{tabular}
-  \caption{Results.   Ours is better.}
-  \label{tab:example}
-\end{table}
-
 %------------------------------------------------------------------------
-\section{Final copy}
-
-You must include your signed IEEE copyright release form when you submit your finished paper.
-We MUST have this form before your paper can be published in the proceedings.
-
-Please direct any questions to the production editor in charge of these proceedings at the IEEE Computer Society Press:
-\url{https://www.computer.org/about/contact}.
 
 \begin{figure*}[t]
     \begin{center}
-    \includegraphics[width=\textwidth]{../x4result.pdf}
+    \includegraphics[width=\textwidth]{../x2result.pdf}
     \end{center}
-    \caption{Comparison of image quality between our method and the bicubic method.}
+    \caption{Comparison of image quality between our method and the bicubic method on LSDIR dataset
+    .}
     \label{yolov3}
 \end{figure*}
 
 \section{Experimental Evaluation}
-In this section, we evaluate our our proposed image super-resolution algorithm through various experiments. The experimental setting is first described, including experiment datasets, hardware and software configurations, and assessment measures. Besides, we present the results of our experiments, and compare our method with other existing study to demonstrate the success of our approach.
+In this section, we evaluate our proposed image super-resolution algorithm through various experiments. The experimental setting is first described, including experiment datasets, hardware and software configurations, and assessment measures. Besides, we present the results of our experiments and compare our method with other existing studies to demonstrate the success of our approach.
 
 \subsection{Experimental Setup}
 
@@ -279,7 +236,6 @@ The DIV2K dataset is a widely used dataset for super-resolution tasks. It compri
 
 The LSDIR dataset proposes a large scale dataset for image restoration. It contains 84,991 high-quality training images and 250 validation images from the whole validation set. The dataset provides both high and low-resolution images for $\times2$, $\times3$, and $\times4$ downscaling factors.
 
-The others 
 
 \subsubsection{Hardware and Software Configurations}
 We conducted all experiments on the laptop with an NVIDIA GeForce RTX 3070 GPU, 512GB of RAM, and an Intel(R) Xeon(R) Gold 6230R CPU in the PyTorch environment (version 1.13.0). When training the model, we used the Adam optimizer with a learning rate of 1e-5 and a batch size of 16. We trained the model on the DIV2K dataset for 300 epochs and the LSDIR dataset for 300 epochs.
@@ -289,57 +245,46 @@ In the experiment, Peak signal-to-noise ratio (PSNR) and structural similarity i
 Additionally, we report the validation time, test time, average time, model parameters, floating-point operations (FLOPs), activation volume, and memory consumption associated with our proposed algorithm. These metrics provide a comprehensive evaluation of effectiveness and computational efficiency about our method.
 
 \subsection{Results}
-Our approach has performed well through a series of experiments. The method increases the PSNR and SSIM scores by 10\% and 15\% respectively, compared to the bicubic interpolation algorithm. These results demonstrate the effectiveness of our proposed super-resolution algorithm on high-resolution images. Table \ref{table-time} shows the PSNR and SSIM scores of our method compared to some existing methods on different datasets.
+Our approach has performed well through a series of experiments. The method increases the PSNR and SSIM scores by 11.1\% and 13.4\% respectively, compared to the bicubic interpolation algorithm. These results demonstrate the effectiveness of our proposed super-resolution algorithm on high-resolution images. Table \ref{table-time} shows the PSNR and SSIM scores of our method compared to some existing methods on different datasets.
 
-Additionally, our method achieves fast test and validation times, demonstrating its superior computational efficiency. On the DIV2K dataset, Table \ref{table-time} shows the performance of our proposed approach on the DIV2K dataset in terms of validation time, test time, average time, and memory usage compared with state-of-the-art methods. Our method achieves a fast average time with 10000ms on the DIV2K dataset. Both the test time and the validation time are particularly low. Specifically, our approach achieved a low validation time of 10000ms. The memory consumption of our approach is 10000MB.
+Additionally, our method achieves fast test and validation times, demonstrating its superior computational efficiency. On the DIV2K dataset, Table \ref{table-time} shows the performance of our proposed approach on the DIV2K dataset in terms of validation time, test time, average time, and memory usage compared with state-of-the-art methods. Our method achieves a fast average time with 19.05ms on the DIV2K dataset. Both the test time and the validation time are particularly low. The memory consumption of our approach is 446.8MB.
 
 \begin{table}[h]
   \centering
-  \caption{Results.   Ours is better.}
+  \caption{Compared with the bicubic method, our method can effectively improve the image quality.}
   \resizebox{\linewidth}{!}{
   \begin{tabular}{lccccc}
     \toprule
     Ave Time[ms] & Params[M] &FLOPs[G] &Acts [M] & Mem[M] &Conv\\
     \midrule
-    25.97&00.402&25.23&81.88&344.51&39\\
+    19.05&0.0629&55.0807&81.88&446.8&64\\
     \bottomrule
   \end{tabular}
   }
   \label{tab:example}
 \end{table}
 
-% Table generated by Excel2LaTeX from sheet 'Sheet1'
 
-\begin{table}[htbp]
+\begin{table}[t]
+    \caption{Compared with the bicubic method, our method can effectively improve the image quality.}
     \resizebox{\columnwidth}{!}
     {
-        \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \begin{tabular}{|c|c|c|c|c|c|c|}
         \hline
-        \multirow{2}{*}{Method} & \multirow{2}{*}{Scale} & \multirow{2}{*}{Params} & Set5  & Set14 & BSD100 & Urban100 & Manga109 \\
-    \cline{4-8}          &       &       & PSNR/SSIM & PSNR/SSIM & PSNR/SSIM & PSNR/SSIM & PSNR/SSIM \\
+        \multirow{2}{*}{Method} & \multirow{2}{*}{Scale} & \multirow{2}{*}{Params} & Set5  & Set14 & BSD100 & Urban100 \\
+    \cline{4-7}          &       &       & PSNR/SSIM & PSNR/SSIM & PSNR/SSIM & PSNR/SSIM  \\
         \hline
-        Bicubic & \multirow{14}[2]{*}{×2} & -     & 33.66/0.9299 & 30.24/0.8688 & 29.56/0.8431 & 26.88/0.8403 & 30.80/0.9339 [t]\\
-        SRCNN[5] &       & 8K    & 36.66/0.9542 & 32.45/0.9067 & 31.36/0.8879 & 29.50/0.8946 & 35.60/0.9663 \\
-        FSRCNN[6] &       & 13K   & 37.00/0.9558 & 32.63/0.9088 & 31.53/0.8920 & 29.88/0.9020 & 36.67/0.9710 \\
-        VDSR[19][13] &       & 666K  & 37.53/0.9587 & 33.03/0.9124 & 31.90/0.8960 & 30.76/0.9140 & 37.22/0.9750 \\
-        DRCN[32][14] &       & 1774K & 37.63/0.9588 & 33.04/0.9118 & 31.85/0.8942 & 30.75/0.9133 & 37.55/0.9732 \\
-        DRRN[30] &       & 298K  & 37.74/0.9591 & 33.23/0.9136 & 32.05/0.8973 & 31.23/0.9188 & 37.88/0.9749 \\
-        MemNet[35] &       & 678K  & 37.78/0.9597 & 33.28/0.9142 & 32.08/0.8978 & 31.31/0.9195 & 37.72/0.9740 \\
-        IDN[12] &       & 553K  & 37.83/0.9600 & 33.30/0.9148 & 32.08/0.8985 & 31.27/0.9196 & 38.01/0.9749 \\
-        SRMDNF[42] &       & 1511K & 37.79/0.9601 & 33.32/0.9159 & 32.05/0.8985 & 31.33/0.9204 & 38.07/0.9761 \\
-        CARN[1] &       & 1592K & 37.76/0.9590 & 33.52/0.9166 & 32.09/0.8978 & 31.92/0.9256 & 38.36/0.9765 \\
-        LAPAR-A[18] &       & 548k  & 38.01/0.9605 & 33.62/0.9183 & 32.19/0.8999 & 32.10/0.9283 & 38.67/0.9772 \\
-        IMDN[11] &       & 694K  & 38.00/0.9605 & 33.63/0.9177 & 32.19/0.8996 & 32.17/0.9283 & 38.88/0.9774 \\
-        RFDN[24] &       & 534K  & 38.05/0.9606 & 33.68/0.9184 & 32.16/0.8994 & 32.12/0.9278 & 38.88/0.9773 \\
-        HNCT (Ours) &       & 356K  & 38.08/0.9608 & 33.65/0.9182 & 32.22/0.9001 & 32.22/0.9294 & 38.87/0.9774 [b]\\
+        Bicubic & \multirow{2}[2]{*}{×2} & -     & 33.66/0.9299 & 30.24/0.8688 & 29.56/0.8431 & 26.88/0.8403  \\
+        PRFDN (Ours) &       & 616K  & 38.01/0.9591 & 33.71/0.9192 & 32.19/0.8999 & 32.10/0.9258 \\
         \hline
         \end{tabular}%
     }
+    \label{tab-quality}
 \end{table}%
 
 
 \subsection{Conclusion}
-Our super-resoluton algorithm performed well on two challenging datasets with great effectiveness and computational efficiency. On both the DIV2K and LSDIR datasets, our method achieved high PSNR and SSIM scores, indicating that our approach can greatly improve image resolution while preserving image features and textures.
+Our super-resolution algorithm performed well on two challenging datasets with great effectiveness and computational efficiency. On both the DIV2K and LSDIR datasets, our method achieved high PSNR and SSIM scores, indicating that our approach can greatly improve image resolution while preserving image features and textures.
 
 Additionally, when compared to the baseline method, our method demonstrated outstanding computing efficiency, reaching a rapid average time and low memory consumption, which is crucial for real-world applications requiring real-time super-resolution processing, such as video streaming and surveillance.
 
